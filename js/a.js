@@ -1,6 +1,8 @@
 var position=0;
 var theSy=-1;
 var thePoint=-1;
+var currentVar;
+var nextState="readLayout";
 
 function readLayout(input,start){
 	var pos=start;
@@ -52,15 +54,15 @@ function isOccur(input,start){
 			tmp+=input.charAt(pos);
 		}else{
 			if(tmp=="OCCURS"){
-				return true;
+				return "Y";
 			}else{
-				return false;
+				return "N";
 			}
 		}
 		pos++;
 		position=pos;
 	}
-	return false;
+	return "";
 }
 
 function readTimesValue(input,start){
@@ -108,21 +110,44 @@ function readEndStat(input,start){
 		}
 		if(input.charAt(start)=='.'){
 			//console.log("end stat");
-			return true;
+			return "Y";
 		}else{
-			return false;
+			return "N";
 		}
 		start++;
 		position=start;
 	}
-	return false;
+	return "";
+}
+
+function readValue(input,start){
+	var pos=start;
+	var tmp="";
+	while(pos!=input.length){
+		if(input.charAt(pos)==' ' && tmp==""){
+			pos++;
+			continue;
+		}
+		if(input.charAt(pos)!=" " && input.charAt(pos)!="."){
+			tmp+=input.charAt(pos);
+		}else{
+			if(tmp=="VALUE"){
+				return "Y";
+			}else{
+				return "N";
+			}
+		}
+		pos++;
+		position=pos;
+	}
+	return "";
 }
 
 function readType(input){
 	var tmp=0;
 	theSy=-1;thePoint=-1;
 	while(position!=input.length){
-		if(input.charAt(position)==' '){
+		if(input.charAt(position)==' ' && tmp==0){
 			position++;
 			continue;
 		}
@@ -174,46 +199,127 @@ function readFromParentheses(input,start){
 	return tmp;
 }
 
-function pharse(input){
-	if(input.charAt(6)=="*"){
-		return null;
+function readValueValue(input,start){
+	var tmp="";
+	var num=0;
+	while(start!=input.length){
+		if(num==2){
+			return tmp;
+		}
+		if(input.charAt(start)==' '){
+			start++;
+			continue;
+		}
+		if(input.charAt(start)=="'"){
+			start++;
+			num++;
+			position=start;
+			continue;
+		}
+		tmp+=input.charAt(start);
+		start++;
+		position=start;
 	}
-	var lay,name,endpoint,isoccur,times,tmp,length;
-	position=7;
-	lay=readLayout(input,position);
-	if(lay==""){
-		return null;
-	}
-	name=readVariableName(input,position);
-	if(name==""){
-		return null;
-	}
+	return tmp;
+}
 
-	endpoint=readEndStat(input,position);
-	if(endpoint==true){
-		var theVar=normVar.createNew();
-		theVar.layout=lay;
-		theVar.variablename=name;
-		return theVar;
-	}
-	isoccur=isOccur(input,position);
-	if(isoccur==true){
+function pharse(input){
+	var lay,name,endpoint,isoccur,times,tmp,length;
+	if(nextState=="readLayout"){
+		if(input.charAt(6)=="*"){
+			position=input.length;
+			return 0;
+		}
+		position=7;
+		currentVar=normVar.createNew();
+		lay=readLayout(input,position);
+		if(lay==""){
+			position=input.length;
+			return 0;
+		}
+		currentVar.layout=lay;
+		nextState="readVariableName";
+	}else if(nextState=="readVariableName"){
+		name=readVariableName(input,position);
+		if(name==""){
+			position=input.length;
+			return 0;
+		}
+		currentVar.variablename=name;
+		nextState="isVarEnd";
+	}else if(nextState=="isOccurs"){
+		isoccur=isOccur(input,position);
+		if(isoccur=="Y"){
+			nextState="readTimesValue";
+		}else if(isoccur=="N"){
+			nextState="readType";
+		}else{
+			position=input.length;
+			return 0;
+		}
+	}else if(nextState=="readTimesValue"){
 		times=readTimesValue(input,position);
+		if(times==""){
+			position=input.length;
+			return 0;
+		}
+		currentVar.times=times;
+		nextState="readTimes";
+	}else if(nextState=="readTimes"){
 		tmp=readTimes(input,position);
-		var theVar=arrayVar.createNew();
-		theVar.layout=lay;
-		theVar.variablename=name;
-		theVar.times=times;
-		return theVar;
-	}else{
+		if(tmp==""){
+			position=input.length;
+			return 0;
+		}
+		nextState="isEnd";
+	}else if(nextState=="readType"){
 		length=readType(input,position);
-		var theVar=typeVar.createNew();
-		theVar.layout=lay;
-		theVar.variablename=name;
-		theVar.length=length;
-		theVar.sy=theSy;
-		theVar.point=thePoint;
-		return theVar;
+		if(length==""){
+			position=input.length;
+			return 0;
+		}
+		currentVar.len=length;
+		currentVar.sy=theSy;
+		currentVar.point=thePoint;
+		nextState="readValue";
+	}else if(nextState=="readValue"){
+		tmp=readValue(input,position);
+		if(tmp=="Y"){
+			nextState="readValueValue";
+		}else if(tmp=="N"){
+			nextState="isEnd";
+		}else{
+			position=input.length;
+			return 0;
+		}
+	}else if(nextState=="readValueValue"){
+		tmp=readValueValue(input,position);
+		if(tmp==""){
+			position=input.length;
+			return 0;
+		}
+		currentVar.value=tmp;
+		nextState="isEnd";
+	}else if(nextState=="isEnd"){
+		endpoint=readEndStat(input,position);
+		if(endpoint=="Y"){
+			position=input.length;
+			nextState="End";
+		}else{
+			position=input.length;
+			return 0;
+		}
+	}else if(nextState=="isVarEnd"){
+		endpoint=readEndStat(input,position);
+		if(endpoint=="Y"){
+			position=input.length;
+			nextState="End";
+		}else if(endpoint==""){
+			position=input.length;
+			return 0;
+		}else{
+			nextState="isOccurs";
+		}
 	}
 }
 

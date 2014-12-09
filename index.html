@@ -23,29 +23,40 @@
 	<script>
 		function geta(){
 			console.clear();
+			position=0;
+			theSy=-1;
+			thePoint=-1;
+			currentVar;
+			nextState="readLayout";
 			var a=$("#cpy").val();
 			var str=$("#stream").val();
 			var lines=a.split('\n');
 			var getValueStart=0;
 			for(var i=0;i<lines.length;i++){
-				var ob=pharse(lines[i]);
-				if(ob==null){
-					continue;
+				while(position!=lines[i].length){
+					pharse(lines[i]);
 				}
-				if(ob.times!=null){
-					console.log(ob.layout+" "+ob.variablename+" "+ob.times);
-				}else if(ob.length!=null){
-					ob.value=inputValue(ob,str,getValueStart,ob.length);
-					getValueStart+=ob.length;
-					if(ob.point!=-1){
+				if(nextState!="End"){
+					position=0;
+					continue;
+				}else{
+					nextState='readLayout';
+					position=0;
+				}
+				if(currentVar.times!=0){
+					console.log(currentVar.layout+" "+currentVar.variablename+" "+currentVar.times);
+				}else if(currentVar.len!=0){
+					currentVar.value=inputValue(currentVar,str,getValueStart,currentVar.len);
+					getValueStart+=currentVar.len;
+					if(currentVar.point!=-1){
 						getValueStart--;
 					}
-					if(ob.sy!=-1){
+					if(currentVar.sy!=-1){
 						getValueStart--;
 					}
-					console.log(ob.layout+" "+ob.variablename+" "+ob.length+" : "+ob.value);
-				}else if(ob!=null){
-					console.log(ob.layout+" "+ob.variablename);
+					console.log(currentVar.layout+" "+currentVar.variablename+" "+currentVar.len+" : "+currentVar.value);
+				}else if(currentVar!=null){
+					console.log(currentVar.layout+" "+currentVar.variablename);
 				}
 			}
 		}

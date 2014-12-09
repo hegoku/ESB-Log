@@ -6,22 +6,8 @@ var normVar={
 			tmp.value="";
 			tmp.point=-1;
 			tmp.sy=-1;
+			tmp.len=0;
+			tmp.times=0;
 			return tmp;
 		}
-};
-
-var typeVar={
-	createNew: function(){
-		var tmp=normVar.createNew();
-		tmp.len=0;
-		return tmp;
-	}
-};
-
-var arrayVar={
-	createNew: function(){
-		var tmp=normVar.createNew();
-		tmp.times=0;
-		return tmp;
-	}
 };
