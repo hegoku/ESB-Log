@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<script src="../js/jquery-2.1.1.min.js"></script>
+	<script src="js/CVar.js"></script>
+	<script src="js/a.js"></script>
+</head>
+<body>
+	<div style="float:left;">
+		CPY:<br />
+		<textarea rows="50" cols="80" id="cpy"></textarea>
+	</div>
+	<div  style="float:left;">
+		String:<br />
+		<textarea rows="50" cols="50" id="stream"></textarea>
+	</div>
+	<div  style="float:left;">
+		Result:<br />
+		<div></div>
+	</div>
+	<a href="#" onclick="geta()">aa</a>
+	<script>
+		function geta(){
+			console.clear();
+			var a=$("#cpy").val();
+			var str=$("#stream").val();
+			var lines=a.split('\n');
+			var getValueStart=0;
+			for(var i=0;i<lines.length;i++){
+				var ob=pharse(lines[i]);
+				if(ob==null){
+					continue;
+				}
+				if(ob.times!=null){
+					console.log(ob.layout+" "+ob.variablename+" "+ob.times);
+				}else if(ob.length!=null){
+					ob.value=inputValue(ob,str,getValueStart,ob.length);
+					getValueStart+=ob.length;
+					if(ob.point!=-1){
+						getValueStart--;
+					}
+					if(ob.sy!=-1){
+						getValueStart--;
+					}
+					console.log(ob.layout+" "+ob.variablename+" "+ob.length+" : "+ob.value);
+				}else if(ob!=null){
+					console.log(ob.layout+" "+ob.variablename);
+				}
+			}
+		}
+	</script>
+</body>
+</html>
