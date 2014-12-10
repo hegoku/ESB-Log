@@ -140,16 +140,16 @@ function readType(input,start){
 			continue;
 		}
 		if(input.charAt(start.value)!=" " && input.charAt(start.value)!="."){
-			if(input.charAt(start.value)=="A"){
+			if(input.charAt(start.value)=="A" || input.charAt(start.value)=="a"){
 				tmp++;
-			}else if(input.charAt(start.value)=="S"){
+			}else if(input.charAt(start.value)=="S" || input.charAt(start.value)=="s"){
 				theSy=tmp;
 				tmp++;
-			}else if(input.charAt(start.value)=="V"){
+			}else if(input.charAt(start.value)=="V" || input.charAt(start.value)=="v"){
 				//if shift then move tmp++ up
 				thePoint=tmp;
 				tmp++;
-			}else if(input.charAt(start.value)=="X"){
+			}else if(input.charAt(start.value)=="X" || input.charAt(start.value)=="x"){
 				start.value++;
 				var num=parseInt(readFromParentheses(input,start));
 				tmp+=num;
@@ -211,6 +211,7 @@ function readValueValue(input,start){
 
 function pharse(input,position){
 	var lay,name,endpoint,isoccur,times,tmp,length;
+	console.log(nextState);
 	if(nextState=="readLayout"){
 		if(input.length<7){
 			position.value=input.length;

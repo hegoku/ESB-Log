@@ -27,14 +27,19 @@ function printLink(head){
 	var tmp1=head;
 	while(tmp1!=null){
 		var tmp=tmp1.node;
+		var parentLay=parseInt(tmp.layout);
+		var space="";
+		for(var j=0;j<parentLay;j++){
+			space+="&nbsp";
+		}
 		if(tmp.times!=0){
-			$("#res").html($("#res").html()+"<p>"+tmp.layout+" "+tmp.variablename+" "+tmp.times+"</p>");
+			$("#res").html($("#res").html()+"<p>"+space+"<font color='#00C800'>"+tmp.layout+"</font> <font color='#7890F0'>"+tmp.variablename+"</font> </font> <font color='red'>"+tmp.times+" TIMES </font></p>");
 			console.log(tmp.layout+" "+tmp.variablename+" "+tmp.times);
 		}else if(tmp.len!=0){
-			$("#res").html($("#res").html()+"<p>"+tmp.layout+" "+tmp.variablename+" "+tmp.len+" : "+tmp.value+"</p>");
+			$("#res").html($("#res").html()+"<p>"+space+"<font color='#00C800'>"+tmp.layout+"</font> <font color='#7890F0'>"+tmp.variablename+"</font> </font> <font color='red'>"+tmp.len+"</font> : "+tmp.value+"</p>");
 			console.log(tmp.layout+" "+tmp.variablename+" "+tmp.len+" : "+tmp.value);
 		}else if(tmp!=null){
-			$("#res").html($("#res").html()+"<p>"+tmp.layout+" "+tmp.variablename+"</p>");
+			$("#res").html($("#res").html()+"<p>"+space+"<font color='#00C800'>"+tmp.layout+"</font> <font color='#7890F0'>"+tmp.variablename+"</font></p>");
 			console.log(tmp.layout+" "+tmp.variablename);
 		}
 		tmp1=tmp1.next;
