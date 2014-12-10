@@ -18,9 +18,9 @@
 	</div>
 	<div  style="float:left;">
 		Result:<br />
-		<div></div>
+		<div id="res"></div>
 	</div>
-	<a href="#" onclick="geta()">aa</a>
+	<a href="#" onclick="geta()">Get</a>
 	<script>
 		function geta(){
 			console.clear();
@@ -31,15 +31,42 @@
 			var a=$("#cpy").val();
 			var str=$("#stream").val();
 			var lines=a.split('\n');
+			lines.push("       0 END-CPY.");
 			getValueStart=0
 			var nodeHead=LinkList.createNew();
-			for(var i=0;i<lines.length;i++){
-				haha(lines[i],str,getValueStart,nodeHead);
+			var parentVar=null;
+			var currentlay=0;
+			var i=0,j=1;
+			while(i<lines.length){
+				haha(lines[i],nodeHead);
+				if(parentVar!=null && currentlay>parseInt(currentVar.layout)){
+					j++;
+					if(j>parentVar.times){
+						parentVar=null;
+						j=1;
+					}else{
+						i=parentLine-1;
+						delLinkFromtail(nodeHead);
+					}
+				}
+				i++;
+				if(currentVar!=null){
+					currentlay=parseInt(currentVar.layout);
+					if(parentVar!=null){
+						currentVar.variablename+="("+j+")";
+					}
+				}
+				if(currentVar!=null && currentVar.times!=0){
+					parentVar=currentVar;
+					parentLine=i;
+					j=1;
+				}
 			}
+			inputValues(str,nodeHead,getValueStart);
 			printLink(nodeHead);
 		}
 		
-		function haha(line,str,getValueStart,head){
+		function haha(line,head){
 			var position=new Object();
 			position.value=0;
 			while(position.value!=line.length){
@@ -53,22 +80,24 @@
 			if(currentVar!=null){
 				addLink(head,currentVar);
 			}
-			/*if(currentVar.times!=0){
-				console.log(currentVar.layout+" "+currentVar.variablename+" "+currentVar.times);
-				console.log("===============================================================");	
-			}else if(currentVar.len!=0){
-				currentVar.value=inputValue(currentVar,str,getValueStart,currentVar.len);
-				getValueStart+=currentVar.len;
-				if(currentVar.point!=-1){
-					getValueStart--;
+		}
+		
+		function inputValues(str,head,getValueStart){
+			var tmp1=head;
+			while(tmp1!=null){
+				var tmp=tmp1.node;
+				if(tmp!=null && tmp.len!=0){
+					tmp.value=inputValue(tmp,str,getValueStart,tmp.len);
+					getValueStart+=tmp.len;
+					if(tmp.point!=-1){
+						getValueStart--;
+					}
+					if(tmp.sy!=-1){
+						getValueStart--;
+					}
 				}
-				if(currentVar.sy!=-1){
-					getValueStart--;
-				}
-				console.log(currentVar.layout+" "+currentVar.variablename+" "+currentVar.len+" : "+currentVar.value);
-			}else if(currentVar!=null){
-				console.log(currentVar.layout+" "+currentVar.variablename);
-			}*/
+				tmp1=tmp1.next;
+			}
 		}
 	</script>
 </body>

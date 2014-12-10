@@ -212,6 +212,10 @@ function readValueValue(input,start){
 function pharse(input,position){
 	var lay,name,endpoint,isoccur,times,tmp,length;
 	if(nextState=="readLayout"){
+		if(input.length<7){
+			position.value=input.length;
+			return 0;
+		}
 		if(input.charAt(6)=="*"){
 			position.value=input.length;
 			return 0;
@@ -320,10 +324,12 @@ function inputValue(ob,str,start,len){
 		a--;
 	}
 	for(i=start;i<a;i++){
-		if(ob.point==(i-start)){
+		if(ob.point==tmp.length){
 			tmp+=".";
-		}else if(ob.sy==(i-start)){
+			i--;
+		}else if(ob.sy==tmp.length){
 			tmp+="-";
+			i--;
 		}else{
 			tmp+=str.charAt(i);
 		}
