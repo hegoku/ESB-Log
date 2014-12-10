@@ -211,7 +211,6 @@ function readValueValue(input,start){
 
 function pharse(input,position){
 	var lay,name,endpoint,isoccur,times,tmp,length;
-	console.log(nextState);
 	if(nextState=="readLayout"){
 		if(input.length<7){
 			position.value=input.length;
