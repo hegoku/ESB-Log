@@ -4,6 +4,7 @@
 	<meta charset="utf-8" />
 	<script src="../js/jquery-2.1.1.min.js"></script>
 	<script src="js/CVar.js"></script>
+	<script src="js/CLinkList.js"></script>
 	<script src="js/a.js"></script>
 </head>
 <body>
@@ -23,7 +24,6 @@
 	<script>
 		function geta(){
 			console.clear();
-			position=0;
 			theSy=-1;
 			thePoint=-1;
 			currentVar;
@@ -31,34 +31,44 @@
 			var a=$("#cpy").val();
 			var str=$("#stream").val();
 			var lines=a.split('\n');
-			var getValueStart=0;
+			getValueStart=0
+			var nodeHead=LinkList.createNew();
 			for(var i=0;i<lines.length;i++){
-				while(position!=lines[i].length){
-					pharse(lines[i]);
-				}
-				if(nextState!="End"){
-					position=0;
-					continue;
-				}else{
-					nextState='readLayout';
-					position=0;
-				}
-				if(currentVar.times!=0){
-					console.log(currentVar.layout+" "+currentVar.variablename+" "+currentVar.times);
-				}else if(currentVar.len!=0){
-					currentVar.value=inputValue(currentVar,str,getValueStart,currentVar.len);
-					getValueStart+=currentVar.len;
-					if(currentVar.point!=-1){
-						getValueStart--;
-					}
-					if(currentVar.sy!=-1){
-						getValueStart--;
-					}
-					console.log(currentVar.layout+" "+currentVar.variablename+" "+currentVar.len+" : "+currentVar.value);
-				}else if(currentVar!=null){
-					console.log(currentVar.layout+" "+currentVar.variablename);
-				}
+				haha(lines[i],str,getValueStart,nodeHead);
 			}
+			printLink(nodeHead);
+		}
+		
+		function haha(line,str,getValueStart,head){
+			var position=new Object();
+			position.value=0;
+			while(position.value!=line.length){
+				pharse(line,position);
+			}
+			if(nextState!="End"){
+				return 0;
+			}else{
+				nextState='readLayout';
+			}
+			if(currentVar!=null){
+				addLink(head,currentVar);
+			}
+			/*if(currentVar.times!=0){
+				console.log(currentVar.layout+" "+currentVar.variablename+" "+currentVar.times);
+				console.log("===============================================================");	
+			}else if(currentVar.len!=0){
+				currentVar.value=inputValue(currentVar,str,getValueStart,currentVar.len);
+				getValueStart+=currentVar.len;
+				if(currentVar.point!=-1){
+					getValueStart--;
+				}
+				if(currentVar.sy!=-1){
+					getValueStart--;
+				}
+				console.log(currentVar.layout+" "+currentVar.variablename+" "+currentVar.len+" : "+currentVar.value);
+			}else if(currentVar!=null){
+				console.log(currentVar.layout+" "+currentVar.variablename);
+			}*/
 		}
 	</script>
 </body>
