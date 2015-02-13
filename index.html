@@ -5,8 +5,9 @@
 	<script src="../js/jquery-2.1.1.min.js"></script>
 	<script src="js/CVar.js"></script>
 	<script src="js/CLinkList.js"></script>
+	<script src="js/EBCDIC.js"></script>
 	<script src="js/a.js"></script>
-	<title>ESB Log Pharse</title>
+	<title>ESB Log Phrase</title>
 	<style>
 	p{margin:0px;}
 	</style>
@@ -75,7 +76,7 @@
 			var position=new Object();
 			position.value=0;
 			while(position.value!=line.length){
-				pharse(line,position);
+				phrase(line,position);
 			}
 			if(nextState!="End"){
 				return 0;
@@ -93,6 +94,24 @@
 				var tmp=tmp1.node;
 				if(tmp!=null && tmp.len!=0){
 					tmp.value=inputValue(tmp,str,getValueStart,tmp.len);
+					//如果是有符号数字转换最后一位获取正负号
+					if(tmp.type=="S"){
+						var lastWord=tmp.value.charAt(tmp.value.length-1);
+						var encodeWord=EBCDIC_encode(lastWord);
+						console.log(lastWord + " " +encodeWord);
+						//如果转换成EBCDIC码后第一位为C说明是正数,D为负数
+						switch(encodeWord.charAt(0)){
+							case "C":
+								tmp.value=" " + tmp.value.substr(1);
+								tmp.value=tmp.value.substr(0,tmp.value.length-1) + encodeWord.charAt(1);
+								break;
+							case "D":
+								tmp.value="-" + tmp.value.substr(1);
+								tmp.value=tmp.value.substr(0,tmp.value.length-1) + encodeWord.charAt(1);
+								break;
+						}
+						
+					}
 					getValueStart+=tmp.len;
 					if(tmp.point!=-1){
 						getValueStart--;

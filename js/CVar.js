@@ -8,6 +8,7 @@ var normVar={
 			tmp.sy=-1;
 			tmp.len=0;
 			tmp.times=0;
+			tmp.type="";
 			return tmp;
 		}
 };

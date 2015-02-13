@@ -144,6 +144,8 @@ function readType(input,start){
 				tmp++;
 			}else if(input.charAt(start.value)=="S" || input.charAt(start.value)=="s"){
 				theSy=tmp;
+				//如果是有符号数,则会有特殊处理
+				currentVar.type="S";
 				tmp++;
 			}else if(input.charAt(start.value)=="V" || input.charAt(start.value)=="v"){
 				//if shift then move tmp++ up
@@ -209,7 +211,7 @@ function readValueValue(input,start){
 	return tmp;
 }
 
-function pharse(input,position){
+function phrase(input,position){
 	var lay,name,endpoint,isoccur,times,tmp,length;
 	if(nextState=="readLayout"){
 		if(input.length<7){
@@ -328,7 +330,7 @@ function inputValue(ob,str,start,len){
 			tmp+=".";
 			i--;
 		}else if(ob.sy==tmp.length){
-			tmp+="-";
+			tmp+="+";
 			i--;
 		}else{
 			tmp+=str.charAt(i);
